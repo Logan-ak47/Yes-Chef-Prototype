@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dc7fc166bc7de14584981f020154960, type: 3}
+  m_Name: Meat
+  m_EditorClassIdentifier: 
+  _displayName: Meat
+  _icon: {fileID: 0}
+  _debugColor: {r: 0.85, g: 0.15, b: 0.15, a: 1}
+  _scoreValue: 30
+  _requiredPreparation: 2
+  _preparationDuration: 6
+  _rawVisualPrefab: {fileID: 3262737549071874036, guid: 46dc220060f8ce3439be6ff44a8fb3b9,
+    type: 3}
+  _preparedVisualPrefab: {fileID: 6347362897267625784, guid: 79ee0ee1f0602164a8c7968c8d14fee5,
+    type: 3}
