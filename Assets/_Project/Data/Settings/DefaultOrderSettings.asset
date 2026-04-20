@@ -16,6 +16,7 @@ MonoBehaviour:
   _orderRespawnDelay: 5
   _minIngredientsPerOrder: 2
   _maxIngredientsPerOrder: 3
+  _scorePenaltyMultiplier: 1
   _orderableIngredients:
   - {fileID: 11400000, guid: 3cc1ab99ece3e4b45a02083015cd35ad, type: 2}
   - {fileID: 11400000, guid: 6c9815285c1f75e4ebd2ddd721c460f8, type: 2}

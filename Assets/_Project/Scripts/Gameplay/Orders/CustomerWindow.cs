@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using YesChef.Core.Channels;
 using YesChef.Data;
@@ -24,6 +25,8 @@ namespace YesChef.Gameplay.Orders
         public OrderSettings Settings => _settings;
         public Order CurrentOrder => _currentOrder;
         public float CurrentElapsedTime => _currentElapsedTime;
+        public event Action<Order> OnOrderAssigned;
+        public event Action OnOrderCleared;
 
         private void Awake()
         {
@@ -88,11 +91,18 @@ namespace YesChef.Gameplay.Orders
 
         public void SetOrder(Order order)
         {
+            if (order == null)
+            {
+                ClearOrder();
+                return;
+            }
+
             _awaitingRespawn = false;
             _respawnAtTime = 0f;
             _currentOrder = order;
             _currentElapsedTime = _currentOrder == null ? 0f : Mathf.Max(0f, Time.time - _currentOrder.TimeOpenedAt);
             _orderChangedChannel?.Raise(_currentOrder);
+            OnOrderAssigned?.Invoke(_currentOrder);
         }
 
         public void ClearOrder()
@@ -102,6 +112,7 @@ namespace YesChef.Gameplay.Orders
             _currentOrder = null;
             _currentElapsedTime = 0f;
             _orderChangedChannel?.Raise(null);
+            OnOrderCleared?.Invoke();
         }
 
         private void Update()
@@ -133,17 +144,27 @@ namespace YesChef.Gameplay.Orders
                 }
             }
 
-            return ingredientValueTotal - Mathf.FloorToInt(Time.time - completedOrder.TimeOpenedAt);
+            float elapsedSeconds = Time.time - completedOrder.TimeOpenedAt;
+            float penaltyMultiplier = _settings != null ? _settings.ScorePenaltyMultiplier : 1f;
+            int penalty = Mathf.FloorToInt(elapsedSeconds * penaltyMultiplier);
+            return ingredientValueTotal - penalty;
         }
 
         private void BeginRespawnCountdown()
         {
-            float delay = _settings != null ? _settings.OrderRespawnDelay : 5f;
+            if (_settings == null)
+            {
+                Debug.LogError($"[CustomerWindow] '{name}' is missing OrderSettings.", this);
+                return;
+            }
+
+            float delay = _settings.OrderRespawnDelay;
             _awaitingRespawn = true;
             _respawnAtTime = Time.time + delay;
             _currentOrder = null;
             _currentElapsedTime = 0f;
             _orderChangedChannel?.Raise(null);
+            OnOrderCleared?.Invoke();
         }
     }
 }

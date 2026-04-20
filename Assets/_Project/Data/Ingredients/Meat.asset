@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Meat
   m_EditorClassIdentifier: 
   _displayName: Meat
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: 309bc55120e28f041a63574c1dd21a80, type: 3}
   _debugColor: {r: 0.85, g: 0.15, b: 0.15, a: 1}
   _scoreValue: 30
   _requiredPreparation: 2

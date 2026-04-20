@@ -3,10 +3,6 @@ using UnityEngine;
 
 namespace YesChef.Gameplay.Interactions
 {
-    // Sits on the InteractionRange child GameObject (SphereCollider trigger).
-    // Auto-interact fires ONLY on trigger entry. If hand state changes while the player
-    // is already overlapping a station (e.g. stove finishes cooking), the station must
-    // call ReEvaluate() — typically via a UnityEvent — to re-check CanInteract.
     public class PlayerInteractor : MonoBehaviour
     {
         private PlayerHand _hand;
@@ -40,9 +36,6 @@ namespace YesChef.Gameplay.Interactions
             interactable.OnExitRange(_hand);
         }
 
-        // Stations call this (via UnityEvent or direct reference) when their internal
-        // state changes while the player is standing in range, so auto-interact can
-        // fire without requiring the player to re-enter the trigger.
         public void ReEvaluate()
         {
             foreach (var interactable in _inRange)

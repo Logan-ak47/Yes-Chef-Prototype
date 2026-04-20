@@ -24,6 +24,7 @@ namespace YesChef.Core
                 (GameState.Running,  GameState.Paused)   => true,
                 (GameState.Running,  GameState.GameOver) => true,
                 (GameState.Paused,   GameState.Running)  => true,
+                (GameState.GameOver, GameState.Running)  => true,
                 (GameState.GameOver, GameState.Menu)     => true,
                 _ => false
             };
@@ -37,7 +38,19 @@ namespace YesChef.Core
 
             GameState prev = _currentState;
             _currentState = next;
+            ApplyTimeScale(next);
             _stateChannel?.Raise(prev, next);
+        }
+
+        private void Awake()
+        {
+            ApplyTimeScale(_currentState);
+        }
+
+        private void Start()
+        {
+            _timeRemainingChannel?.Raise(_timeRemaining);
+            _stateChannel?.Raise(_currentState, _currentState);
         }
 
         private void Update()
@@ -45,18 +58,29 @@ namespace YesChef.Core
             if (_currentState != GameState.Running) return;
 
             _timeRemaining -= Time.deltaTime;
-            _timeRemainingChannel?.Raise(_timeRemaining);
+            _timeRemainingChannel?.Raise(Mathf.Max(0f, _timeRemaining));
 
             if (_timeRemaining <= 0f)
             {
                 _timeRemaining = 0f;
+                _timeRemainingChannel?.Raise(_timeRemaining);
                 TransitionTo(GameState.GameOver);
             }
         }
 
         public void StartGame()
         {
-            _timeRemaining = _settings != null ? _settings.GameDurationSeconds : 180f;
+            if (_settings == null)
+            {
+                Debug.LogError("[GameManager] GameSettings is not assigned.", this);
+                _timeRemaining = 0f;
+            }
+            else
+            {
+                _timeRemaining = _settings.GameDurationSeconds;
+            }
+
+            _timeRemainingChannel?.Raise(_timeRemaining);
             TransitionTo(GameState.Running);
         }
 
@@ -77,11 +101,17 @@ namespace YesChef.Core
 
         public void QuitGame()
         {
+            Time.timeScale = 1f;
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
             Application.Quit();
 #endif
+        }
+
+        private static void ApplyTimeScale(GameState state)
+        {
+            Time.timeScale = state == GameState.Paused ? 0f : 1f;
         }
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using YesChef.Data;
+using YesChef.Gameplay.Visuals;
 
 namespace YesChef.Gameplay.Interactions
 {
@@ -9,6 +10,8 @@ namespace YesChef.Gameplay.Interactions
         [SerializeField] private IngredientDefinition _ingredient;
         [SerializeField] private GameObject _highlight;
 
+        private EmissionHighlight _highlightController;
+
         public Transform Anchor => transform;
 
         private void Awake()
@@ -16,7 +19,13 @@ namespace YesChef.Gameplay.Interactions
             GetComponent<BoxCollider>().isTrigger = true;
 
             if (_highlight != null)
-                _highlight.SetActive(false);
+            {
+                _highlightController = _highlight.GetComponent<EmissionHighlight>();
+                if (_highlightController == null)
+                {
+                    _highlightController = _highlight.AddComponent<EmissionHighlight>();
+                }
+            }
 
             if (_ingredient == null)
                 Debug.LogError($"[RefrigeratorSlot] '{name}': IngredientDefinition not assigned.", this);
@@ -26,12 +35,12 @@ namespace YesChef.Gameplay.Interactions
 
         public void OnEnterRange(PlayerHand hand)
         {
-            if (_highlight != null) _highlight.SetActive(true);
+            _highlightController?.Show();
         }
 
         public void OnExitRange(PlayerHand hand)
         {
-            if (_highlight != null) _highlight.SetActive(false);
+            _highlightController?.Hide();
         }
 
         public void TryInteract(PlayerHand hand)

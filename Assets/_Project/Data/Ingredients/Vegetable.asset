@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Vegetable
   m_EditorClassIdentifier: 
   _displayName: Vegetable
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: b72326c3e4a75d04a8cf7f53d65878a8, type: 3}
   _debugColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
   _scoreValue: 20
   _requiredPreparation: 1
